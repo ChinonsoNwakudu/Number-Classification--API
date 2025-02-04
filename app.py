@@ -22,5 +22,13 @@ def is_prime(n):
   
     return True
 
+# Perfect Number
 def is_perfect(n):
     return n == sum( i for i in range(1, n) if n % i == 0 )
+
+#Armstrong
+def is_armstrong(n):
+    num = str(n) # convert each number to a string because we need the digits to be string to know its length
+    power = len(num) # the length of the number is need to calculate the power
+    return n == sum(int(i) ** power for i in num)
+
