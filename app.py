@@ -52,7 +52,7 @@ async def classify_number(number: str = Query(..., description="Number you want 
             number = int(number)  # Try to convert the number to an integer
         except ValueError:
             # If conversion fails, return a 400 Bad Request response with the invalid number
-            return {"number": number, "error": True}
+            raise HTTPException(status_code=400, detail=f"Invalid input: '{number}' is not a number")
 
         # Handle negative numbers
         if number < 0:
@@ -82,4 +82,4 @@ async def classify_number(number: str = Query(..., description="Number you want 
         }
 
     except Exception as e:
-        return {"number": number, "error": True, "message": str(e)}
+        raise HTTPException(status_code=400, detail=f"Error: {str(e)}")
