@@ -1,5 +1,6 @@
-from fastapi import FastAPI, Query, HTTPException
+from fastapi import FastAPI, Query
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse  
 import math
 import requests
 
@@ -46,14 +47,14 @@ def get_fun_fact(n):
 
 @app.get("/api/classify-number/")
 async def classify_number(number: str = Query(..., description="Number you want to classify")):
-    # Check if the input is a valid number
     try:
-        number = int(number)  # Try to convert the number to an integer
+        # Try to convert the input to an integer
+        number = int(number)
     except ValueError:
-        # If conversion fails, raise a 400 Bad Request response with the invalid number
-        raise HTTPException(
+        # If conversion fails, return a 400 Bad Request response with the exact structure required
+        return JSONResponse(
             status_code=400,
-            detail={"number": number, "error": True},
+            content={"number": number, "error": True},  # Directly returning the response in the required format
         )
 
     # Handle negative numbers
