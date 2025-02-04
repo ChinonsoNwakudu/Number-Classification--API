@@ -46,41 +46,39 @@ def get_fun_fact(n):
 
 @app.get("/api/classify-number/")
 async def classify_number(number: str = Query(..., description="Number you want to classify")):
+    # Check if the input is a valid number
     try:
-        # Check if the input is a valid number
-        try:
-            number = int(number)  # Try to convert the number to an integer
-        except ValueError:
-            # If conversion fails, return a 400 Bad Request response with the invalid input in the required format
-            return {"number": number, "error": True}
+        number = int(number)  # Try to convert the number to an integer
+    except ValueError:
+        # If conversion fails, raise a 400 Bad Request response with the invalid number
+        raise HTTPException(
+            status_code=400,
+            detail={"number": number, "error": True},
+        )
 
-        # Handle negative numbers
-        if number < 0:
-            properties = ["odd" if number % 2 else "even"]  # Only "odd" or "even"
-            return {
-                "number": number,
-                "is_prime": False,
-                "is_perfect": False,
-                "properties": properties,
-                "digit_sum": sum(int(digit) for digit in str(abs(number))),
-                "fun_fact": "No fun fact available for negative numbers."
-            }
-
-        # Valid positive number logic
-        properties = []
-        if is_armstrong(number):
-            properties.append("armstrong")
-        properties.append("odd" if number % 2 else "even")
-
+    # Handle negative numbers
+    if number < 0:
+        properties = ["odd" if number % 2 else "even"]  # Only "odd" or "even"
         return {
             "number": number,
-            "is_prime": is_prime(number),
-            "is_perfect": is_perfect(number),
+            "is_prime": False,
+            "is_perfect": False,
             "properties": properties,
-            "digit_sum": sum(int(digit) for digit in str(number)),
-            "fun_fact": get_fun_fact(number),
+            "digit_sum": sum(int(digit) for digit in str(abs(number))),
+            "fun_fact": "No fun fact available for negative numbers."
         }
 
-    except Exception as e:
-        # General exception handler (not usually necessary for this case)
-        return {"number": number, "error": True, "message": str(e)}
+    # Valid positive number logic
+    properties = []
+    if is_armstrong(number):
+        properties.append("armstrong")
+    properties.append("odd" if number % 2 else "even")
+
+    return {
+        "number": number,
+        "is_prime": is_prime(number),
+        "is_perfect": is_perfect(number),
+        "properties": properties,
+        "digit_sum": sum(int(digit) for digit in str(number)),
+        "fun_fact": get_fun_fact(number),
+    }
