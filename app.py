@@ -47,12 +47,12 @@ def get_fun_fact(n):
 @app.get("/api/classify-number/")
 async def classify_number(number: str = Query(..., description="Number you want to classify")):
     try:
-        # validates if input is a number
+        # Check if the input is a valid number
         try:
             number = int(number)  # Try to convert the number to an integer
         except ValueError:
-            # If conversion fails, return a 400 Bad Request response with the invalid number
-            raise HTTPException(status_code=400, detail=f"Invalid input: '{number}' is not a number")
+            # If conversion fails, return a 400 Bad Request response with the invalid input in the required format
+            return {"number": number, "error": True}
 
         # Handle negative numbers
         if number < 0:
@@ -82,4 +82,5 @@ async def classify_number(number: str = Query(..., description="Number you want 
         }
 
     except Exception as e:
-        raise HTTPException(status_code=400, detail=f"Error: {str(e)}")
+        # General exception handler (not usually necessary for this case)
+        return {"number": number, "error": True, "message": str(e)}
