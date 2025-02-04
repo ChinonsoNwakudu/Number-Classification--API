@@ -49,7 +49,7 @@ Error Handling (400 Bad Request):
 ## Installation & Setup
 ### Clone the Repository
 ```
-git clone https://github.com/ChinonsoNwakudu/Number-Classification--API.git
+git clone https://github.com/ChinonsoNwakudu/Number-Classification-API.git
 
 cd your-repo
 ```
