@@ -46,31 +46,40 @@ def get_fun_fact(n):
 
 @app.get("/api/classify-number/")
 async def classify_number(number: str = Query(..., description="Number you want to classify")):
-    # Validate input
     try:
-        number = int(number)  # Try to convert the number to an integer
-    except ValueError:
-        raise HTTPException(status_code=400, detail="Invalid input, number is required.")
+        # validates if input is a number
+        try:
+            number = int(number)  # Try to convert the number to an integer
+        except ValueError:
+            # If conversion fails, return a 400 Bad Request response with the invalid number
+            return {"number": number, "error": True}
 
-    # Handle negative numbers and zero
-    if number < 0:
-        return {"number": number, "is_prime": False, "is_perfect": False, "properties": [], "digit_sum": 0, "fun_fact": "Negative numbers are not classified."}
+        # Handle negative numbers
+        if number < 0:
+            properties = ["odd" if number % 2 else "even"]  # Only "odd" or "even"
+            return {
+                "number": number,
+                "is_prime": False,
+                "is_perfect": False,
+                "properties": properties,
+                "digit_sum": sum(int(digit) for digit in str(abs(number))),
+                "fun_fact": "No fun fact available for negative numbers."
+            }
 
-    # Properties list
-    properties = []
-    if is_armstrong(number):
-        properties.append("armstrong")
-    if number % 2 == 0:
-        properties.append("even")
-    else:
-        properties.append("odd")
+        # Valid positive number logic
+        properties = []
+        if is_armstrong(number):
+            properties.append("armstrong")
+        properties.append("odd" if number % 2 else "even")
 
-    # Return the classification
-    return {
-        "number": number,
-        "is_prime": is_prime(number),
-        "is_perfect": is_perfect(number),
-        "properties": properties,
-        "digit_sum": sum(int(digit) for digit in str(number)),
-        "fun_fact": get_fun_fact(number),
-    }
+        return {
+            "number": number,
+            "is_prime": is_prime(number),
+            "is_perfect": is_perfect(number),
+            "properties": properties,
+            "digit_sum": sum(int(digit) for digit in str(number)),
+            "fun_fact": get_fun_fact(number),
+        }
+
+    except Exception as e:
+        return {"number": number, "error": True, "message": str(e)}
